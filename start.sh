@@ -1,8 +1,9 @@
 #!/bin/bash
 
-MYSQLUSER="${MYSQLUSER:-reviewboard}"
-MYSQLPASSWORD="${MYSQLPASSWORD:-reviewboard}"
-MYSQLDB="${MYSQLDB:-reviewboard}"
+MYSQL_USER="${MYSQL_USER:-reviewboard}"
+MYSQL_ROOT_PASSWORD="${MYSQL_ROOT_PASSWORD:-reviewboard}"
+MYSQL_PASSWORD="${MYSQL_PASSWORD:-reviewboard}"
+MYSQL_DATABASE="${MYSQL_DATABASE:-reviewboard}"
 
 # Get these variables either from MYSQLPORT and MYSQLHOST, or from
 # linked "mysql" container.
@@ -26,10 +27,10 @@ if [[ ! -d /var/www/reviewboard ]]; then
         --domain-name="$DOMAIN" \
         --site-root=/ --static-url=static/ --media-url=media/ \
         --db-type=mysql \
-        --db-name="$MYSQLDB" \
+        --db-name="$MYSQL_DATABASE" \
         --db-host="$MYSQLHOST" \
-        --db-user="$MYSQLUSER" \
-        --db-pass="$MYSQLPASSWORD" \
+        --db-user="$MYSQL_USER" \
+        --db-pass="$MYSQL_PASSWORD" \
         --cache-type=memcached --cache-info="$MEMCACHED" \
         --web-server-type=lighttpd --web-server-port=8000 \
         --admin-user=admin --admin-password=admin --admin-email=admin@example.com \

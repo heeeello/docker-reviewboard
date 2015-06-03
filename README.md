@@ -8,7 +8,7 @@ The requirements are mysql and memcached, you can use either dockersized version
 ## Quickstart. Run dockerized reviewboard with all dockerized dependencies, and persistent data in a docker container.
 
     # Install mysql
-    docker run -d --name rb-mysql -e MYSQLUSER=reviewboard mysql
+    docker run -d --name rb-mysql -e MYSQL_USER=reviewboard mysql
 
     # Install memcached
     docker run --name rb-memcached -d -p 11211 sylvainlasnier/memcached
@@ -37,7 +37,7 @@ You can install mysql either into a docker container, or whereever else.
 
 1. Example: install mysql into a docker container, and create a database for reviewboard.
 
-        docker run -d --name rb-mysql -e MYSQLUSER=reviewboard mysql
+        docker run -d --name rb-mysql -e MYSQL_USER=reviewboard -e MYSQL_ROOT_PASSWORD=password1234 mysql
 
 2. Example: install mysql into the host machine, example given for a Debian/Ubuntu based distribution.
 
@@ -74,9 +74,10 @@ The container accepts the following environment variables:
 
 - ```MYSQLHOST``` - the mysql host. Defaults to the value of ```MYSQL_PORT_3306_TCP_ADDR```, provided by the ```mysql``` linked container.
 - ```MYSQLPORT``` - the mysql port. Defaults to the value of ```MYSQL_PORT_3306_TCP_ADDR```, provided by the ```mysql``` linked container, or 3306, if it's empty.
-- ```MYSQLUSER``` - the mysql user. Defaults to ```reviewboard```.
-- ```MYSQLDB``` - the mysql database. Defaults to ```reviewboard```.
-- ```MYSQLPASSWORD``` - the mysql password. Defaults to ```reviewboard```.
+- ```MYSQL_USER``` - the mysql user. Defaults to ```reviewboard```.
+- ```MYSQL_DATABASE``` - the mysql database. Defaults to ```reviewboard```.
+- ```MYSQL_PASSWORD``` - the mysql password. Defaults to ```reviewboard```.
+- ```MYSQL_ROOT_PASSWORD``` - the root mysql password. Defaults to ```reviewboard```.
 - ```MEMCACHED``` - memcache address in format ```host:port```. Defaults to the value from linked ```memcached``` container.
 - ```DOMAIN``` - defaults to ```localhost```.
 - ```DEBUG``` - if set, the django server will be launched in debug mode.
@@ -96,7 +97,7 @@ E.g. ```-e UWSGI_PROCESSES=10``` will create 10 reviewboard processes.
 
     # Create a data container.
     docker run -v /.ssh -v /media --name rb-data busybox true
-    docker run -it -p 8000:8080 --volumes-from rb-data -e MYSQLHOST="$DOCKER_HOST_IP" -e MYSQLPASSWORD=123 -e MYSQLUSER=reviewboard -e MEMCACHED="$DOCKER_HOST_IP":11211 leibniz137/reviewboard
+    docker run -it -p 8000:8080 --volumes-from rb-data -e MYSQLHOST="$DOCKER_HOST_IP" -e MYSQL_PASSWORD=123 -e MYSQL_USER=reviewboard -e MEMCACHED="$DOCKER_HOST_IP":11211 leibniz137/reviewboard
 
 Now, go to the url, e.g. ```http://localhost:8000/```, login as ```admin:admin``` and change the password. The reviewboard is almost ready to use!
 
