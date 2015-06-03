@@ -1,20 +1,17 @@
 FROM debian:wheezy
-MAINTAINER igor.katson@gmail.com
+MAINTAINER ncg09@hampshire.edu
 
 ENV DEBIAN_FRONTEND noninteractive
 
-RUN apt-get update
-RUN apt-get install -y python-pip python-dev python-psycopg2 git subversion mercurial python-svn
+COPY start.sh /
+COPY uwsgi.ini /
+COPY shell.sh /
 
-RUN easy_install reviewboard
-
-RUN pip install -U uwsgi
-
-ADD start.sh /start.sh
-ADD uwsgi.ini /uwsgi.ini
-ADD shell.sh /shell.sh
-
-RUN chmod +x start.sh shell.sh
+RUN apt-get update \
+  && apt-get install -y python-pip python-dev python-mysqldb git subversion mercurial python-svn \
+  && easy_install reviewboard \
+  && pip install -U uwsgi \
+  && chmod +x /start.sh /shell.sh
 
 VOLUME ["/.ssh", "/media/"]
 
