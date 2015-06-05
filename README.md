@@ -8,7 +8,12 @@ The requirements are mysql and memcached, you can use either dockersized version
 ## Quickstart. Run dockerized reviewboard with all dockerized dependencies, and persistent data in a docker container.
 
     # Install mysql
-    docker run -d --name rb-mysql -e MYSQL_USER=reviewboard mysql
+    docker run -d --name rb-mysql \
+      -e MYSQL_USER=reviewboard \
+      -e MYSQL_ROOT_PASSWORD=reviewboard \
+      -e MYSQL_PASSWORD=reviewboard \
+      -e MYSQL_DATABASE=reviewboard \
+      mysql
 
     # Install memcached
     docker run --name rb-memcached -d -p 11211 sylvainlasnier/memcached
@@ -17,7 +22,11 @@ The requirements are mysql and memcached, you can use either dockersized version
     docker run -v /.ssh -v /media --name rb-data busybox true
 
     # Run reviewboard
-    docker run -it --link rb-mysql:mysql --link rb-memcached:memcached --volumes-from rb-data -p 8000:8000 /reviewboard
+    docker run --name rb -it \
+      --link rb-mysql:mysql \
+      --link rb-memcached:memcached \
+      --volumes-from rb-data \
+      -p 8000:8000 leibniz137/reviewboard
 
 After that, go the url, e.g. ```http://localhost:8000/```, login as ```admin:admin```, change the admin password, and change the location of your SMTP server so that the reviewboard can send emails. You are all set!
 
@@ -37,7 +46,12 @@ You can install mysql either into a docker container, or whereever else.
 
 1. Example: install mysql into a docker container, and create a database for reviewboard.
 
-        docker run -d --name rb-mysql -e MYSQL_USER=reviewboard -e MYSQL_ROOT_PASSWORD=password1234 mysql
+        docker run -d --name rb-mysql \
+          -e MYSQL_USER=reviewboard \
+          -e MYSQL_ROOT_PASSWORD=reviewboard \
+          -e MYSQL_PASSWORD=reviewboard \
+          -e MYSQL_DATABASE=reviewboard \
+          mysql
 
 2. Example: install mysql into the host machine, example given for a Debian/Ubuntu based distribution.
 
@@ -89,7 +103,11 @@ E.g. ```-e UWSGI_PROCESSES=10``` will create 10 reviewboard processes.
 
     # Create a data container.
     docker run -v /.ssh -v /media --name rb-data busybox true
-    docker run -it --link rb-mysql:mysql --link memcached:memcached --volumes-from rb-data -p 8000:8000 leibniz137/reviewboard
+    docker run --name rb -it \
+      --link rb-mysql:mysql \
+      --link memcached:memcached \
+      --volumes-from rb-data \
+      -p 8000:8000 leibniz137/reviewboard
 
 ### Example. Run with mysql and memcached installed on the host machine.
 
