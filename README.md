@@ -72,8 +72,8 @@ This container has two volume mount-points:
 
 The container accepts the following environment variables:
 
-- ```MYSQLHOST``` - the mysql host. Defaults to the value of ```MYSQL_PORT_3306_TCP_ADDR```, provided by the ```mysql``` linked container.
-- ```MYSQLPORT``` - the mysql port. Defaults to the value of ```MYSQL_PORT_3306_TCP_ADDR```, provided by the ```mysql``` linked container, or 3306, if it's empty.
+- ```MYSQL_HOST``` - the mysql host. Defaults to the value of ```MYSQL_PORT_3306_TCP_ADDR```, provided by the ```mysql``` linked container.
+- ```MYSQL_PORT``` - the mysql port. Defaults to the value of ```MYSQL_PORT_3306_TCP_ADDR```, provided by the ```mysql``` linked container, or 3306, if it's empty.
 - ```MYSQL_USER``` - the mysql user. Defaults to ```reviewboard```.
 - ```MYSQL_DATABASE``` - the mysql database. Defaults to ```reviewboard```.
 - ```MYSQL_PASSWORD``` - the mysql password. Defaults to ```reviewboard```.
@@ -97,7 +97,7 @@ E.g. ```-e UWSGI_PROCESSES=10``` will create 10 reviewboard processes.
 
     # Create a data container.
     docker run -v /.ssh -v /media --name rb-data busybox true
-    docker run -it -p 8000:8080 --volumes-from rb-data -e MYSQLHOST="$DOCKER_HOST_IP" -e MYSQL_PASSWORD=123 -e MYSQL_USER=reviewboard -e MEMCACHED="$DOCKER_HOST_IP":11211 leibniz137/reviewboard
+    docker run -it -p 8000:8080 --volumes-from rb-data -e MYSQL_HOST="$DOCKER_HOST_IP" -e MYSQL_PASSWORD=123 -e MYSQL_USER=reviewboard -e MEMCACHED="$DOCKER_HOST_IP":11211 leibniz137/reviewboard
 
 Now, go to the url, e.g. ```http://localhost:8000/```, login as ```admin:admin``` and change the password. The reviewboard is almost ready to use!
 

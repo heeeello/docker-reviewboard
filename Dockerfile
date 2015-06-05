@@ -8,7 +8,17 @@ COPY uwsgi.ini /
 COPY shell.sh /
 
 RUN apt-get update \
-  && apt-get install -y python-pip python-dev python-mysqldb git subversion mercurial python-svn \
+  && apt-get install -y \
+    git-core \
+    patch \
+    python-dev \
+    python-mysqldb \
+    python-pip \
+    python-setuptools \
+    python-subvertpy \
+    memcached \
+    python-svn \
+    subversion \
   && easy_install reviewboard \
   && pip install -U uwsgi \
   && chmod +x /start.sh /shell.sh

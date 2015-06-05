@@ -7,8 +7,8 @@ MYSQL_DATABASE="${MYSQL_DATABASE:-reviewboard}"
 
 # Get these variables either from MYSQLPORT and MYSQLHOST, or from
 # linked "mysql" container.
-MYSQLPORT="${MYSQLPORT:-$( echo "${MYSQL_PORT_3306_TCP_PORT:-3306}" )}"
-MYSQLHOST="${MYSQLHOST:-$( echo "${MYSQL_PORT_3306_TCP_ADDR:-127.0.0.1}" )}"
+MYSQL_PORT="${MYSQL_PORT:-$( echo "${MYSQL_PORT_3306_TCP_PORT:-3306}" )}"
+MYSQL_HOST="${MYSQL_HOST:-$( echo "${MYSQL_PORT_3306_TCP_ADDR:-127.0.0.1}" )}"
 
 # Get these variable either from MEMCACHED env var, or from
 # linked "memcached" container.
@@ -28,7 +28,7 @@ if [[ ! -d /var/www/reviewboard ]]; then
         --site-root=/ --static-url=static/ --media-url=media/ \
         --db-type=mysql \
         --db-name="$MYSQL_DATABASE" \
-        --db-host="$MYSQLHOST" \
+        --db-host="$MYSQL_HOST" \
         --db-user="$MYSQL_USER" \
         --db-pass="$MYSQL_PASSWORD" \
         --cache-type=memcached --cache-info="$MEMCACHED" \
