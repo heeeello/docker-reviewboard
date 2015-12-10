@@ -7,26 +7,7 @@ The requirements are mysql and memcached, you can use either dockersized version
 
 ## Quickstart. Run dockerized reviewboard with all dockerized dependencies, and persistent data in a docker container.
 
-    # Install mysql
-    docker run -d --name rb-mysql \
-      -e MYSQL_USER=reviewboard \
-      -e MYSQL_ROOT_PASSWORD=reviewboard \
-      -e MYSQL_PASSWORD=reviewboard \
-      -e MYSQL_DATABASE=reviewboard \
-      mysql
-
-    # Install memcached
-    docker run --name rb-memcached -d -p 11211 sylvainlasnier/memcached
-
-    # Create a data container for reviewboard with ssh credentials and media.
-    docker run -v /.ssh -v /media --name rb-data busybox true
-
-    # Run reviewboard
-    docker run --name rb -it \
-      --link rb-mysql:mysql \
-      --link rb-memcached:memcached \
-      --volumes-from rb-data \
-      -p 8000:8000 leibniz137/reviewboard
+    cd docker-reviewboard && docker-compose up
 
 After that, go the url, e.g. ```http://localhost:8000/```, login as ```admin:admin```, change the admin password, and change the location of your SMTP server so that the reviewboard can send emails. You are all set!
 
@@ -38,42 +19,7 @@ If you want to build this yourself, just run this:
 
     docker build -t 'leibniz137/reviewboard' git://github.com/Leibniz137/docker-reviewboard.git
 
-## Dependencies
-
-### Install MySQL
-
-You can install mysql either into a docker container, or whereever else.
-
-1. Example: install mysql into a docker container, and create a database for reviewboard.
-
-        docker run -d --name rb-mysql \
-          -e MYSQL_USER=reviewboard \
-          -e MYSQL_ROOT_PASSWORD=reviewboard \
-          -e MYSQL_PASSWORD=reviewboard \
-          -e MYSQL_DATABASE=reviewboard \
-          mysql
-
-2. Example: install mysql into the host machine, example given for a Debian/Ubuntu based distribution.
-
-        apt-get install mysql-server
-
-        # Uncomment this to make mysql listen on all addresses.
-        # TODO: is this correct?
-        # echo "listen_addresses = '*'" >> /etc/mysql/my.cnf
-        # invoke-rc.d mysql restart
-        sudo -u mysql createuser reviewboard
-        sudo -u mysql createdb reviewboard -O reviewboard
-        sudo -u mysql psql -c "alter user reviewboard set password to 'SOME_PASSWORD'"
-
-### Install memcached
-
-1. Example: install into a docker container
-
-        docker run --name memcached -d -p 11211 sylvainlasnier/memcached
-
-1. Example: install locally on Debian/Ubuntu.
-
-        apt-get install memcached
+### Memcached
 
    Don't forget to make it listen on needed addresses by editing /etc/memcached.conf, but be careful not to open memcached for the whole world.
 
@@ -99,25 +45,6 @@ The container accepts the following environment variables:
 Also, uwsgi accepts environment prefixed with ```UWSGI_``` for it's configuration
 E.g. ```-e UWSGI_PROCESSES=10``` will create 10 reviewboard processes.
 
-### Example. Run with dockerized mysql and memcached from above, expose on port 8000:
-
-    # Create a data container.
-    docker run -v /.ssh -v /media --name rb-data busybox true
-    docker run --name rb -it \
-      --link rb-mysql:mysql \
-      --link memcached:memcached \
-      --volumes-from rb-data \
-      -p 8000:8000 leibniz137/reviewboard
-
-### Example. Run with mysql and memcached installed on the host machine.
-
-    DOCKER_HOST_IP=$( ip addr | grep 'inet 172.1' | awk '{print $2}' | sed 's/\/.*//')
-
-    # Create a data container.
-    docker run -v /.ssh -v /media --name rb-data busybox true
-    docker run -it -p 8000:8080 --volumes-from rb-data -e MYSQL_HOST="$DOCKER_HOST_IP" -e MYSQL_PASSWORD=123 -e MYSQL_USER=reviewboard -e MEMCACHED="$DOCKER_HOST_IP":11211 leibniz137/reviewboard
-
-Now, go to the url, e.g. ```http://localhost:8000/```, login as ```admin:admin``` and change the password. The reviewboard is almost ready to use!
 
 ### Container SMTP settings.
 
