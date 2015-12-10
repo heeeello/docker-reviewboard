@@ -1,0 +1,36 @@
+db:
+  image: mysql
+  environment:
+    - "MYSQL_ROOT_PASSWORD=CHANGE_ME"
+    - "MYSQL_USER=reviewboard"
+    - "MYSQL_PASSWORD=CHANGE_ME"
+    - "MYSQL_DATABASE=reviewboard"
+  volumes_from:
+    - db_data
+
+db_data:
+  image: busybox
+  volumes:
+    - /var/lib/mysql
+
+ui_data:
+  image: busybox
+  volumes:
+    - /.ssh
+    - /media
+
+ui:
+  image: leibniz137/docker-reviewboard
+  environment:
+    - "ADMIN_PASSWORD=CHANGE_ME"
+    - "DEBUG=true"
+    - "DOMAIN=localhost"
+    - "MYSQL_HOST=db"
+    - "MYSQL_USER=reviewboard"
+    - "MYSQL_PASSWORD=CHANGE_ME"
+  links:
+    - db
+  ports:
+    - "80:8000"
+  volumes_from:
+    - ui_data
