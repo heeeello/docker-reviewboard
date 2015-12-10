@@ -1,6 +1,6 @@
 #!/bin/bash
 
-MYSQL_USER="${MYSQL_USER:-reviewboard}"
+MYSQL_USER="${MYSQL_USER}"
 MYSQL_ROOT_PASSWORD="${MYSQL_ROOT_PASSWORD:-reviewboard}"
 MYSQL_PASSWORD="${MYSQL_PASSWORD:-reviewboard}"
 MYSQL_DATABASE="${MYSQL_DATABASE:-reviewboard}"
@@ -15,31 +15,34 @@ MYSQL_HOST="${MYSQL_HOST:-$( echo "${MYSQL_PORT_3306_TCP_ADDR:-127.0.0.1}" )}"
 MEMCACHED_LINKED_NOTCP="${MEMCACHED_PORT#tcp://}"
 MEMCACHED="${MEMCACHED:-$( echo "${MEMCACHED_LINKED_NOTCP:-127.0.0.1}" )}"
 
-DOMAIN="${DOMAIN:localhost}"
 DEBUG="$DEBUG"
+
+sed -i "s/{{DOMAIN}}/${DOMAIN}/" /uwsgi.ini
 
 mkdir -p /var/www/
 
-CONFFILE=/var/www/reviewboard/conf/settings_local.py
+CONFFILE="/var/www/${DOMAIN}/conf/settings_local.py"
 
-if [[ ! -d /var/www/reviewboard ]]; then
+sleep 10s   # wait for db to start
+
+if [[ ! -d "/var/www/${DOMAIN}" ]]; then
     rb-site install --noinput \
         --domain-name="$DOMAIN" \
         --site-root=/ --static-url=static/ --media-url=media/ \
         --db-type=mysql \
-        --db-name="$MYSQL_DATABASE" \
-        --db-host="$MYSQL_HOST" \
-        --db-user="$MYSQL_USER" \
-        --db-pass="$MYSQL_PASSWORD" \
+        --db-name="${MYSQL_DATABASE}" \
+        --db-host="${MYSQL_HOST}" \
+        --db-user="${MYSQL_USER}" \
+        --db-pass="${MYSQL_PASSWORD}" \
         --cache-type=memcached --cache-info="$MEMCACHED" \
         --web-server-type=lighttpd --web-server-port=8000 \
-        --admin-user=admin --admin-password=admin --admin-email=admin@example.com \
-        /var/www/reviewboard/
+        --admin-user=admin --admin-password="${ADMIN_PASSWORD}" --admin-email=admin@example.com \
+        "/var/www/${DOMAIN}"
 fi
-if [[ "$DEBUG" ]]; then
+if [[ "${DEBUG}" ]]; then
     sed -i 's/DEBUG *= *False/DEBUG=True/' "$CONFFILE"
 fi
 
-cat "$CONFFILE"
+cat "${CONFFILE}"
 
 exec uwsgi --ini /uwsgi.ini

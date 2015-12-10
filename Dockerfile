@@ -2,14 +2,16 @@ FROM debian:wheezy
 MAINTAINER ncg09@hampshire.edu
 
 ENV DEBIAN_FRONTEND noninteractive
+ENV DOMAIN localhost
 
-COPY start.sh /
-COPY uwsgi.ini /
-COPY shell.sh /
 
 RUN apt-get update \
   && apt-get install -y \
     git-core \
+    libjpeg8 \
+    libjpeg62-dev \
+    libfreetype6 \
+    libfreetype6-dev \
     patch \
     python-dev \
     python-mysqldb \
@@ -17,13 +19,16 @@ RUN apt-get update \
     python-setuptools \
     python-subvertpy \
     memcached \
+    python-imaging \
     python-svn \
     subversion \
   && easy_install reviewboard \
-  && pip install -U uwsgi \
-  && chmod +x /start.sh /shell.sh
+  && pip install -U uwsgi
 
-VOLUME ["/.ssh", "/media/"]
+COPY start.sh /
+COPY uwsgi.ini /
+COPY shell.sh /
+RUN chmod +x /start.sh /shell.sh
 
 EXPOSE 8000
 
