@@ -1,5 +1,5 @@
 FROM debian:wheezy
-MAINTAINER ncg09@hampshire.edu
+MAINTAINER jim.mei@centling.com
 
 ENV DEBIAN_FRONTEND noninteractive
 ENV DOMAIN localhost
