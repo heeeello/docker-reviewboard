@@ -36,6 +36,8 @@ COPY uwsgi.ini /
 COPY shell.sh /
 RUN chmod +x /start.sh /shell.sh
 
+VOLUME ["/.ssh", "/media/"]
+
 EXPOSE 8000
 
 CMD /start.sh
