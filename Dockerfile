@@ -41,9 +41,9 @@ VOLUME ["/.ssh", "/media/"]
 EXPOSE 8000
 
 # For debugging
-apt-get install -y procps
-apt-get install -y net-tools
-apt-get install -y netcat
+RUN apt-get install -y procps
+RUN apt-get install -y net-tools
+RUN apt-get install -y netcat
 
 
 
