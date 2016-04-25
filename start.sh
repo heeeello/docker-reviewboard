@@ -17,15 +17,15 @@ MEMCACHED="${MEMCACHED:-$( echo "${MEMCACHED_LINKED_NOTCP:-127.0.0.1}" )}"
 
 DEBUG="$DEBUG"
 
-sed -i "s/{{DOMAIN}}/${DOMAIN}/" /uwsgi.ini
+#sed -i "s/{{DOMAIN}}/${DOMAIN}/" /uwsgi.ini
 
 mkdir -p /var/www/
 
-CONFFILE="/var/www/${DOMAIN}/conf/settings_local.py"
+CONFFILE="/var/www/reviewboard/conf/settings_local.py"
 
 sleep 10s   # wait for db to start
 
-if [[ ! -d "/var/www/${DOMAIN}" ]]; then
+if [[ ! -d "/var/www/reviewboard" ]]; then
     rb-site install --noinput \
         --domain-name="$DOMAIN" \
         --site-root=/ --static-url=static/ --media-url=media/ \
@@ -37,7 +37,7 @@ if [[ ! -d "/var/www/${DOMAIN}" ]]; then
         --cache-type=memcached --cache-info="$MEMCACHED" \
         --web-server-type=lighttpd --web-server-port=8000 \
         --admin-user=admin --admin-password="${ADMIN_PASSWORD}" --admin-email=admin@example.com \
-        "/var/www/${DOMAIN}"
+        "/var/www/reviewboard"
 fi
 if [[ "${DEBUG}" ]]; then
     sed -i 's/DEBUG *= *False/DEBUG=True/' "$CONFFILE"
